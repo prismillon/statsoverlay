@@ -1,7 +1,7 @@
 FROM rust:1.73.0 AS builder
 RUN cargo new --bin app
 WORKDIR /app
-COPY Cargo.* .
+COPY Cargo.* ./
 RUN cargo build --release
 COPY src/*.rs ./src/.
 RUN touch -a -m ./src/main.rs
