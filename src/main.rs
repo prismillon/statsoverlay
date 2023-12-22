@@ -1,6 +1,5 @@
 use actix_files::Files;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder, middleware::Logger};
-use env_logger::Env;
+use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use serde_json;
 use std::collections::HashMap;
@@ -52,9 +51,12 @@ async fn stats_handler(params: web::Query<HashMap<String, String>>) -> impl Resp
 
             HttpResponse::Ok().json(response_obj)
         }
-        Err(error) => {
-            eprintln!("Error: {}", error);
-            HttpResponse::InternalServerError().finish()
+        Err(_error) => {
+            HttpResponse::Ok().json(serde_json::json!({
+                "mmr": "Invalid Name",
+                "rankImage": "",
+                "mmrDelta": "",
+            }))
         }
     }
 }
@@ -81,14 +83,11 @@ fn get_rank_image(rank: &str) -> &str {
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    env_logger::init_from_env(Env::default().default_filter_or("info"));
     HttpServer::new(|| {
         App::new()
             .service(web::resource("/api/stats").to(stats_handler))
             .service(web::resource("/").to(index))
             .service(Files::new("/image", "./image"))
-            .wrap(Logger::default())
-            .wrap(Logger::new("%a"))
     })
     .bind("0.0.0.0:44994")?
     .run()
