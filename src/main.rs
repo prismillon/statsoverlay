@@ -2,7 +2,7 @@ use actix_files::Files;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use serde_json;
-use std::collections::HashMap;
+use std::{collections::HashMap, fs};
 use actix_web::Result;
 
 #[derive(Deserialize)]
@@ -22,7 +22,10 @@ async fn index(params: web::Query<HashMap<String, String>>) -> impl Responder {
     if params.get("name").is_none() {
         return HttpResponse::Ok().body("please add \"?name=<your_name_here>\" in the link")
     }
-    let html_content = "<!DOCTYPE html><html><head><title>prismillon stats overlay</title><style>@import url(https://fonts.cdnfonts.com/css/ds-digital?styles=18001);body{font-family:DS-Digital,monospace;display:flex;align-items:center;justify-content:center;flex-direction:column}#stats{display:flex;align-items:center;margin-top:20px}#stats img{width:100px;height:auto}#stats p{font-size:80px;margin-left:20px;background-color:rgba(0,0,0,.5);color:#fff;padding:10px;border-radius: 15px;}#stats span{font-size:40px;margin-left:10px}#stats span.red{color:#ff5858}#stats span.green{color:#6eff58}</style></head><body><div id='stats'></div><script>function updateStats(){const name=new URLSearchParams(window.location.search).get('name'); fetch('/api/stats?name=' + name) .then(response=> response.json()) .then(data=>{const statsDiv=document.getElementById('stats'); if (data.mmrDelta !=''){const mmrDelta=data.mmrDelta; statsDiv.innerHTML=` <img src='${data.rankImage}' alt='Rank Image'> <p>${data.mmr}<span class=\"${mmrDelta >=0 ? 'green' : 'red'}\">${mmrDelta >=0 ? '+' : ''}${mmrDelta}</span></p>`;}else{statsDiv.innerHTML=` <img src='${data.rankImage}' alt='Rank Image'> <p>${data.mmr}</p>`;}}) .catch(error=>{console.error('Error:', error);});}updateStats(); setInterval(updateStats, 60000);</script></body></html>";
+    let html_content = match fs::read_to_string("./index.html") {
+        Ok(content) => content,
+        Err(_) => return HttpResponse::InternalServerError().finish()
+    };
     HttpResponse::Ok().body(html_content)
 }
 
