@@ -43,20 +43,48 @@
             #stats span.green {
                 color: #6eff58
             }
+
+            #stats span.disabled {
+                color: rgba(0,0,0,0);
+                display: none;
+            }
         </style>
     </head>
     <body>
         <div id='stats'></div>
         <script>
+            localStorage.removeItem('mmr');
+            function animateMmrChange(oldValue, newValue, statsDiv, mmrDelta, colorClass, sign, rankImage) {
+                let current = oldValue || newValue - mmrDelta;
+                const interval = setInterval(()=>{
+                    if (current < newValue) {
+                        current += 1;
+                    } else {
+                        current -= 1;
+                    }
+                    if (current == newValue) {
+                        clearInterval(interval);
+                        statsDiv.innerHTML = ` <img src='${rankImage}' alt='Rank Image'> <p>${newValue}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
+                    } else {
+                        statsDiv.innerHTML = ` <img src='${rankImage}' alt='Rank Image'> <p>${current}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
+                    }
+                }, 50);
+            }
+
             function updateStats() {
                 const name = new URLSearchParams(window.location.search).get('name');
+                const oldMmr = localStorage.getItem('mmr');
                 fetch('/api/stats?name=' + name).then(response=>response.json()).then(data=>{
                     const statsDiv = document.getElementById('stats');
-                    if (data.mmrDelta != '') {
-                        const mmrDelta = data.mmrDelta;
-                        statsDiv.innerHTML = ` <img src='${data.rankImage}' alt='Rank Image'> <p>${data.mmr}<span class="${mmrDelta >= 0 ? 'green' : 'red'}">${mmrDelta >= 0 ? '+' : ''}${mmrDelta}</span></p>`;
-                    } else {
-                        statsDiv.innerHTML = ` <img src='${data.rankImage}' alt='Rank Image'> <p>${data.mmr}</p>`;
+                    const mmrDelta = data.mmrDelta;
+                    const colorClass = mmrDelta > 0 ? 'green' : mmrDelta < 0 ? 'red' : 'disabled';
+                    const sign = mmrDelta > 0 ? '+' : '';
+                    console.log(mmrDelta, colorClass, oldMmr, data.mmr);
+                    if (oldMmr != data.mmr && data.mmr != 'Invalid Name') {
+                        animateMmrChange(oldMmr, data.mmr, statsDiv, mmrDelta, colorClass, sign, data.rankImage);
+                        localStorage.setItem('mmr', data.mmr);
+                    } else if (data.mmr === 'Invalid Name') {
+                        statsDiv.innerHTML = ` <img src='' alt='Rank Image'> <p>Invalid name</p>`;
                     }
                 }
                 ).catch(error=>{
