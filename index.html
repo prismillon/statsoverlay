@@ -55,14 +55,18 @@
         <script>
             localStorage.removeItem('mmr');
             function animateMmrChange(oldValue, newValue, statsDiv, mmrDelta, colorClass, sign, rankImage) {
-                let current = oldValue || newValue - mmrDelta;
+                if (oldValue == null) {
+                    oldValue = newValue - mmrDelta;
+                }
+                let current = parseInt(oldValue)
+                newValue = parseInt(newValue);
                 const interval = setInterval(()=>{
                     if (current < newValue) {
                         current += 1;
                     } else {
                         current -= 1;
                     }
-                    if (current == newValue) {
+                    if (current === newValue) {
                         clearInterval(interval);
                         statsDiv.innerHTML = ` <img src='${rankImage}' alt='Rank Image'> <p>${newValue}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
                     } else {
@@ -93,7 +97,7 @@
                 );
             }
             updateStats();
-            setInterval(updateStats, 60000);
+            setInterval(updateStats, 10000);
         </script>
     </body>
 </html>
