@@ -3,12 +3,18 @@
     <head>
         <title>prismillon stats overlay</title>
         <style>
-            @import url(https://fonts.cdnfonts.com/css/ds-digital?styles=18001);body {
-                font-family: DS-Digital,monospace;
+            @font-face {
+                font-family: testFont;
+                src: url(http://www.1001fonts.com/download/font/digital-7.monoitalic.ttf);
+            }
+
+            body {
+                font-family: testFont;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                flex-direction: column
+                flex-direction: column;
+                text-shadow: 2px 2px 2px black;
             }
 
             #stats {
@@ -18,16 +24,22 @@
             }
 
             #stats img {
-                width: 100px;
-                height: auto
+                width: 70px;
+                height: auto;
+                margin-left: 10px;
+                position: relative;
+                top: 8px;
             }
 
             #stats p {
                 font-size: 80px;
-                margin-left: 20px;
-                background-color: rgba(0,0,0,.5);
+                background-image: url('./image/overlaybg.png');
+                background-repeat: no-repeat;
+                background-size: 100% 100%;
                 color: #fff;
-                padding: 10px;
+                padding: 20px;
+                padding-right: 60px;
+                padding-left: 40px;
                 border-radius: 15px;
             }
 
@@ -55,6 +67,7 @@
         <script>
             localStorage.removeItem('mmr');
             function animateMmrChange(oldValue, newValue, statsDiv, mmrDelta, colorClass, sign, rankImage) {
+                duration = 3000;
                 if (oldValue == null) {
                     oldValue = newValue - mmrDelta;
                 }
@@ -68,11 +81,11 @@
                     }
                     if (current === newValue) {
                         clearInterval(interval);
-                        statsDiv.innerHTML = ` <img src='${rankImage}' alt='Rank Image'> <p>${newValue}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
+                        statsDiv.innerHTML = ` <p><img src='${rankImage}' alt='Rank Image'>${newValue}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
                     } else {
-                        statsDiv.innerHTML = ` <img src='${rankImage}' alt='Rank Image'> <p>${current}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
+                        statsDiv.innerHTML = ` <p><img src='${rankImage}' alt='Rank Image'>${current}<span class="${colorClass}">${sign}${mmrDelta}</span></p>`;
                     }
-                }, 50);
+                }, duration / Math.abs(newValue - current));
             }
 
             function updateStats() {
