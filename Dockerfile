@@ -11,6 +11,5 @@ FROM debian:stable-slim
 RUN apt update && apt install -y openssl ca-certificates
 WORKDIR /app
 COPY image image
-COPY index.html index.html
 COPY --from=builder /app/target/release/statsoverlay /app/statsoverlay
 CMD "/app/statsoverlay"
