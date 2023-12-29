@@ -2,7 +2,7 @@ use actix_files::Files;
 use actix_web::{web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 use serde_json;
-use std::{collections::HashMap, fs};
+use std::collections::HashMap;
 use actix_web::Result;
 
 #[derive(Deserialize)]
@@ -22,10 +22,8 @@ async fn index(params: web::Query<HashMap<String, String>>) -> impl Responder {
     if params.get("name").is_none() {
         return HttpResponse::Ok().body("please add \"?name=<your_name_here>\" in the link")
     }
-    let html_content = match fs::read_to_string("./index.html") {
-        Ok(content) => content,
-        Err(_) => return HttpResponse::InternalServerError().finish()
-    };
+    let html_content = "<!DOCTYPE html><html><head><title>prismillon stats overlay</title><style>@font-face{font-family:testFont;src:url(image/font.ttf)}body{font-family:testFont;display:flex;align-items:center;justify-content:center;flex-direction:column;text-shadow:2px 2px 2px #000}#stats{display:flex;align-items:center;margin-top:20px}#stats img{width:60px;height:auto;margin-left:10px;margin-right:10px;position:relative;top:7px}#stats p{font-size:70px;background-image:url(image/overlaybg.png);background-repeat:no-repeat;background-size:100% 100%;color:#fff;padding:20px;padding-right:60px;padding-left:30px;border-radius:15px}#stats span{font-size:30px;margin-left:10px}#stats span.red{color:#ff5858}#stats span.green{color:#6eff58}#stats span.disabled{color:transparent;display:none}</style></head><body><div id=\"stats\"></div><script>localStorage.removeItem('mmr');
+    function animateMmrChange(a,e,m,n,t,r,s){duration=3e3,null==a&&(a=e-n);let l=parseInt(a);e=parseInt(e);let i=setInterval(()=>{l<e?l+=1:l-=1,l===e?(clearInterval(i),m.innerHTML=` <p><img src='${s}' alt='Rank Image'>${e}<span class=\"${t}\">${r}${n}</span></p>`):m.innerHTML=` <p><img src='${s}' alt='Rank Image'>${l}<span class=\"${t}\">${r}${n}</span></p>`},duration/Math.abs(e-l))}function updateStats(){let a=new URLSearchParams(window.location.search).get(\"name\"),e=localStorage.getItem(\"mmr\");fetch(\"/api/stats?name=\"+a).then(a=>a.json()).then(a=>{let m=document.getElementById(\"stats\"),n=a.mmrDelta,t=n>0?\"green\":n<0?\"red\":\"disabled\";console.log(n,t,e,a.mmr),e!=a.mmr&&\"Invalid Name\"!=a.mmr?(animateMmrChange(e,a.mmr,m,n,t,n>0?\"+\":\"\",a.rankImage),localStorage.setItem(\"mmr\",a.mmr)):\"Invalid Name\"===a.mmr&&(m.innerHTML=\" <img src='' alt='Rank Image'> <p>Invalid name</p>\")}).catch(a=>{console.error(\"Error:\",a)})}updateStats(),setInterval(updateStats,6e4);</script></body></html>";
     HttpResponse::Ok().body(html_content)
 }
 
