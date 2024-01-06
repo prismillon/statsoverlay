@@ -1,5 +1,4 @@
-use actix_files::Files;
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpResponse, HttpServer, Responder, get};
 use serde::Deserialize;
 use serde_json;
 use std::collections::HashMap;
@@ -18,13 +17,26 @@ struct PlayerDetails {
     mmrChanges: Option<Vec<MmrChanges>>,
 }
 
+const FONT: &[u8] = include_bytes!("../image/font.ttf");
+const BACKGROUND: &[u8] = include_bytes!("../image/overlaybg.png");
+const GRANDMASTER: &[u8] = include_bytes!("../image/grandmaster.png");
+const MASTER: &[u8] = include_bytes!("../image/master.png");
+const DIAMOND: &[u8] = include_bytes!("../image/diamond.png");
+const RUBY: &[u8] = include_bytes!("../image/ruby.png");
+const SAPPHIRE: &[u8] = include_bytes!("../image/sapphire.png");
+const PLATINUM: &[u8] = include_bytes!("../image/platinum.png");
+const GOLD: &[u8] = include_bytes!("../image/gold.png");
+const SILVER: &[u8] = include_bytes!("../image/silver.png");
+const BRONZE: &[u8] = include_bytes!("../image/bronze.png");
+const IRON: &[u8] = include_bytes!("../image/iron.png");
+
+const HTMLPAGE: &[u8] = include_bytes!("../mini.html");
+
 async fn index(params: web::Query<HashMap<String, String>>) -> impl Responder {
     if params.get("name").is_none() {
         return HttpResponse::Ok().body("please add \"?name=<your_name_here>\" in the link")
     }
-    let html_content = "<!DOCTYPE html><html><head><title>prismillon stats overlay</title><style>@font-face{font-family:testFont;src:url(image/font.ttf)}body{font-family:testFont;display:flex;align-items:center;justify-content:center;flex-direction:column;text-shadow:2px 2px 2px #000}#stats{display:flex;align-items:center;margin-top:20px}#stats img{width:60px;height:auto;margin-left:10px;margin-right:10px;position:relative;top:7px}#stats p{font-size:70px;background-image:url(image/overlaybg.png);background-repeat:no-repeat;background-size:100% 100%;color:#fff;padding:20px;padding-right:60px;padding-left:30px;border-radius:15px}#stats span{font-size:30px;margin-left:10px}#stats span.red{color:#ff5858}#stats span.green{color:#6eff58}#stats span.disabled{color:transparent;display:none}</style></head><body><div id=\"stats\"></div><script>localStorage.removeItem('mmr');
-    function animateMmrChange(a,e,m,n,t,r,s){duration=3e3,null==a&&(a=e-n);let l=parseInt(a);e=parseInt(e);let i=setInterval(()=>{l<e?l+=1:l-=1,l===e?(clearInterval(i),m.innerHTML=` <p><img src='${s}' alt='Rank Image'>${e}<span class=\"${t}\">${r}${n}</span></p>`):m.innerHTML=` <p><img src='${s}' alt='Rank Image'>${l}<span class=\"${t}\">${r}${n}</span></p>`},duration/Math.abs(e-l))}function updateStats(){let a=new URLSearchParams(window.location.search).get(\"name\"),e=localStorage.getItem(\"mmr\");fetch(\"/api/stats?name=\"+a).then(a=>a.json()).then(a=>{let m=document.getElementById(\"stats\"),n=a.mmrDelta,t=n>0?\"green\":n<0?\"red\":\"disabled\";console.log(n,t,e,a.mmr),e!=a.mmr&&\"Invalid Name\"!=a.mmr?(animateMmrChange(e,a.mmr,m,n,t,n>0?\"+\":\"\",a.rankImage),localStorage.setItem(\"mmr\",a.mmr)):\"Invalid Name\"===a.mmr&&(m.innerHTML=\" <img src='' alt='Rank Image'> <p>Invalid name</p>\")}).catch(a=>{console.error(\"Error:\",a)})}updateStats(),setInterval(updateStats,6e4);</script></body></html>";
-    HttpResponse::Ok().body(html_content)
+    HttpResponse::Ok().body(HTMLPAGE)
 }
 
 async fn stats_handler(params: web::Query<HashMap<String, String>>) -> impl Responder {
@@ -82,13 +94,37 @@ fn get_rank_image(rank: &str) -> &str {
     }
 }
 
+#[derive(Deserialize)]
+struct Info {
+    asset: String,
+}
+
+#[get("/image/{asset}")]
+async fn assets_handler(info: web::Path<Info>) -> HttpResponse {
+    match info.asset.as_str() {
+        "font.ttf" => HttpResponse::Ok().content_type("font/ttf").body(FONT),
+        "overlaybg.png" => HttpResponse::Ok().content_type("image/png").body(BACKGROUND),
+        "grandmaster.png" => HttpResponse::Ok().content_type("image/png").body(GRANDMASTER),
+        "master.png" => HttpResponse::Ok().content_type("image/png").body(MASTER),
+        "diamond.png" => HttpResponse::Ok().content_type("image/png").body(DIAMOND),
+        "ruby.png" => HttpResponse::Ok().content_type("image/png").body(RUBY),
+        "sapphire.png" => HttpResponse::Ok().content_type("image/png").body(SAPPHIRE),
+        "platinum.png" => HttpResponse::Ok().content_type("image/png").body(PLATINUM),
+        "gold.png" => HttpResponse::Ok().content_type("image/png").body(GOLD),
+        "silver.png" => HttpResponse::Ok().content_type("image/png").body(SILVER),
+        "bronze.png" => HttpResponse::Ok().content_type("image/png").body(BRONZE),
+        "iron.png" => HttpResponse::Ok().content_type("image/png").body(IRON),
+        _ => HttpResponse::NotFound().finish(),
+    }
+}
+
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| {
         App::new()
             .service(web::resource("/api/stats").to(stats_handler))
             .service(web::resource("/").to(index))
-            .service(Files::new("/image", "./image"))
+            .service(assets_handler)
     })
     .bind("0.0.0.0:44994")?
     .run()
