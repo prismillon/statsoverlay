@@ -1,8 +1,7 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder, get};
+use actix_web::{get, web, App, HttpResponse, HttpServer, Responder, Result};
 use serde::Deserialize;
 use serde_json;
 use std::collections::HashMap;
-use actix_web::Result;
 
 #[derive(Deserialize)]
 struct MmrChanges {
@@ -30,11 +29,11 @@ const SILVER: &[u8] = include_bytes!("../image/silver.png");
 const BRONZE: &[u8] = include_bytes!("../image/bronze.png");
 const IRON: &[u8] = include_bytes!("../image/iron.png");
 
-const HTMLPAGE: &[u8] = include_bytes!("../mini.html");
+const HTMLPAGE: &[u8] = include_bytes!("../index.html");
 
 async fn index(params: web::Query<HashMap<String, String>>) -> impl Responder {
     if params.get("name").is_none() {
-        return HttpResponse::Ok().body("please add \"?name=<your_name_here>\" in the link")
+        return HttpResponse::Ok().body("please add \"?name=<your_name_here>\" in the link");
     }
     HttpResponse::Ok().body(HTMLPAGE)
 }
@@ -42,15 +41,20 @@ async fn index(params: web::Query<HashMap<String, String>>) -> impl Responder {
 async fn stats_handler(params: web::Query<HashMap<String, String>>) -> impl Responder {
     let name = match params.get("name") {
         Some(x) => x,
-        _ => return HttpResponse::BadRequest().finish()
+        _ => return HttpResponse::BadRequest().finish(),
     };
-    let api_url = format!("https://www.mk8dx-lounge.com/api/player/details?name={}", name);
+    let api_url = format!(
+        "https://www.mk8dx-lounge.com/api/player/details?name={}",
+        name
+    );
     match fetch_data(api_url).await {
         Ok(data) => {
             let mmr = &data.mmr;
             let rank = &data.rank;
             let mmr_delta = match &data.mmrChanges {
-                Some(changes) if !changes.is_empty() && changes[0].reason == "Table" => &changes[0].mmrDelta,
+                Some(changes) if !changes.is_empty() && changes[0].reason == "Table" => {
+                    &changes[0].mmrDelta
+                }
                 _ => &0,
             };
 
@@ -64,13 +68,11 @@ async fn stats_handler(params: web::Query<HashMap<String, String>>) -> impl Resp
 
             HttpResponse::Ok().json(response_obj)
         }
-        Err(_error) => {
-            HttpResponse::Ok().json(serde_json::json!({
-                "mmr": "Invalid Name",
-                "rankImage": "",
-                "mmrDelta": "",
-            }))
-        }
+        Err(_error) => HttpResponse::Ok().json(serde_json::json!({
+            "mmr": "Invalid Name",
+            "rankImage": "",
+            "mmrDelta": "",
+        })),
     }
 }
 
@@ -90,7 +92,7 @@ fn get_rank_image(rank: &str) -> &str {
         "Silver 1" | "Silver 2" => "./image/silver.png",
         "Bronze 1" | "Bronze 2" => "./image/bronze.png",
         "Iron 1" | "Iron 2" => "./image/iron.png",
-        _ => ""
+        _ => "",
     }
 }
 
@@ -103,8 +105,12 @@ struct Info {
 async fn assets_handler(info: web::Path<Info>) -> HttpResponse {
     match info.asset.as_str() {
         "font.ttf" => HttpResponse::Ok().content_type("font/ttf").body(FONT),
-        "overlaybg.png" => HttpResponse::Ok().content_type("image/png").body(BACKGROUND),
-        "grandmaster.png" => HttpResponse::Ok().content_type("image/png").body(GRANDMASTER),
+        "overlaybg.png" => HttpResponse::Ok()
+            .content_type("image/png")
+            .body(BACKGROUND),
+        "grandmaster.png" => HttpResponse::Ok()
+            .content_type("image/png")
+            .body(GRANDMASTER),
         "master.png" => HttpResponse::Ok().content_type("image/png").body(MASTER),
         "diamond.png" => HttpResponse::Ok().content_type("image/png").body(DIAMOND),
         "ruby.png" => HttpResponse::Ok().content_type("image/png").body(RUBY),

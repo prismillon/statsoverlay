@@ -5,7 +5,7 @@ COPY Cargo.* ./
 RUN cargo build --release
 COPY src/*.rs ./src/.
 COPY image image
-COPY mini.html ./
+COPY index.html ./
 RUN touch -a -m ./src/main.rs
 RUN cargo build --release
 
