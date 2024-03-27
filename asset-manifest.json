@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/statsoverlay/static/css/main.2ea2e636.css",
+    "main.js": "/statsoverlay/static/js/main.ba018770.js",
+    "static/media/ruby.png": "/statsoverlay/static/media/ruby.dfa3f73c381a6170b2e0.png",
+    "static/media/gold.png": "/statsoverlay/static/media/gold.b66edab0c38b43960211.png",
+    "static/media/silver.png": "/statsoverlay/static/media/silver.932839f9e3b43a63e97a.png",
+    "static/media/diamond.png": "/statsoverlay/static/media/diamond.391d6ecb15124a73403f.png",
+    "static/media/iron.png": "/statsoverlay/static/media/iron.faa7ee5fdf18bfb0ee05.png",
+    "static/media/bronze.png": "/statsoverlay/static/media/bronze.65ec62e9ccc103664091.png",
+    "static/media/platinum.png": "/statsoverlay/static/media/platinum.58b33f6aeda385c038ba.png",
+    "static/media/sapphire.png": "/statsoverlay/static/media/sapphire.05f9920b5c8fb8477087.png",
+    "static/media/grandmaster.png": "/statsoverlay/static/media/grandmaster.3970bd21ffd4a8abbe3b.png",
+    "static/media/master.png": "/statsoverlay/static/media/master.7782bb0df191b43b46cf.png",
+    "static/media/font.ttf": "/statsoverlay/static/media/font.f9d90b4cfe3463d2d543.ttf",
+    "static/media/background.png": "/statsoverlay/static/media/background.6b8a8ccae68ad0c9365a.png",
+    "index.html": "/statsoverlay/index.html",
+    "main.2ea2e636.css.map": "/statsoverlay/static/css/main.2ea2e636.css.map",
+    "main.ba018770.js.map": "/statsoverlay/static/js/main.ba018770.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.2ea2e636.css",
+    "static/js/main.ba018770.js"
+  ]
+}
