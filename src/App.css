@@ -1,0 +1,83 @@
+@font-face {
+  font-family: testFont;
+  src: url("./font.ttf");
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+  font-family: testFont;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  text-shadow: 2px 2px 2px black;
+}
+
+.logo {
+  width: auto;
+  height: auto;
+  margin-left: 10px;
+  position: relative;
+  /* top: 7px; */
+}
+
+.mk8dx_logo {
+  width: 60px;
+  height: auto;
+  margin-left: 10px;
+  margin-right: 10px;
+  position: relative;
+  top: 7px;
+}
+
+.wrapper {
+  font-size: 70px;
+  /* background-image: url("./background.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%; */
+  color: #fff;
+  padding: 20px;
+  padding-right: 60px;
+  padding-left: 30px;
+  border-radius: 15px;
+}
+
+.mk8dx_wrapper {
+  font-size: 70px;
+  background-image: url("./background.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+  color: #fff;
+  padding: 20px;
+  padding-right: 60px;
+  padding-left: 30px;
+  border-radius: 15px;
+}
+
+.diff {
+  height: 45px;
+}
+
+.diffbox {
+  margin-left: 10px;
+}
+
+.modifier {
+  font-size: 30px;
+  margin-left: 10px;
+}
+
+.red {
+  color: #ff5858;
+}
+
+.green {
+  color: #6eff58;
+}
+
+.disabled {
+  color: rgba(0, 0, 0, 0);
+  display: none;
+}
