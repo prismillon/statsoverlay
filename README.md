@@ -23,3 +23,22 @@ the browser source should look something like this:
 AFter pressing OK you can now position the overlay into any position and resize it to any size you see fit. one such usecase could look like this:
 
 ![obsimage](./media/tutorial_obs.png)
+
+
+## Getting Started
+
+First, run the development server:
+
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
