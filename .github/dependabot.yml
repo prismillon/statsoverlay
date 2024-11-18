@@ -10,7 +10,7 @@ updates:
     schedule:
       interval: "weekly"
     groups:
-      python:
+      node:
         applies-to: version-updates
         patterns:
           - "*"
