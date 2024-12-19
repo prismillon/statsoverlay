@@ -1,6 +1,6 @@
 "use server";
 
-import GrandMaster from "./image/grandmaster.png";
+import Grandmaster from "./image/grandmaster.png";
 import Master from "./image/master.png";
 import Diamond from "./image/diamond.png";
 import Ruby from "./image/ruby.png";
