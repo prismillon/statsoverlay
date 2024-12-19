@@ -13,7 +13,7 @@ import Iron from "./image/iron.png";
 import { StaticImageData } from "next/image";
 
 const rankMap = {
-  GrandMaster,
+  Grandmaster,
   Master,
   Diamond,
   Ruby,
