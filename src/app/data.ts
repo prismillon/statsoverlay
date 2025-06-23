@@ -50,7 +50,7 @@ const DEFAULT_DATA: Data = {
 export async function getData(name: string): Promise<Data> {
   try {
     const response = await fetch(
-      `https://www.mk8dx-lounge.com/api/player/details?name=${encodeURIComponent(
+      `https://lounge.mkcentral.com/api/player/details?name=${encodeURIComponent(
         name
       )}`,
       {
