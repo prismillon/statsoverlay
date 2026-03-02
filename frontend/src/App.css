@@ -1,6 +1,6 @@
 @font-face {
   font-family: testFont;
-  src: url("./fonts/mk.ttf");
+  src: url("/static/fonts/mk.ttf");
 }
 
 .stats {
@@ -40,7 +40,7 @@
 
 .mk8dx_wrapper {
   font-size: 70px;
-  background-image: url("./background.png");
+  background-image: url("/static/background.png");
   background-repeat: no-repeat;
   background-size: 100% 100%;
   color: #fff;

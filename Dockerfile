@@ -1,28 +1,24 @@
-FROM oven/bun:1 AS base
+# Build frontend
+FROM oven/bun:1 AS frontend-builder
+WORKDIR /app/frontend
+COPY frontend/package.json frontend/bun.lock* ./
+RUN bun install --frozen-lockfile
+COPY frontend/ ./
+RUN bun run build
 
-FROM base AS deps
+# Build backend
+FROM rust:1 AS backend-builder
+RUN cargo new --bin app
 WORKDIR /app
-COPY package.json bun.lock ./
-RUN bun install
+COPY Cargo.* ./
+RUN cargo build --release
+COPY src/*.rs ./src/.
+RUN touch -a -m ./src/main.rs
+RUN cargo build --release
 
-FROM base AS builder
-WORKDIR /app
-COPY --from=deps /app/node_modules ./node_modules
-COPY . .
-RUN mkdir -p public && bun run build
-
-FROM oven/bun:1-slim
-WORKDIR /app
-ENV NODE_ENV=production
-
-RUN groupadd --system --gid 1001 nodejs && \
-    useradd --system --uid 1001 --gid nodejs nextjs
-
-COPY --from=builder --chown=nextjs:nodejs /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
-USER nextjs
-
-EXPOSE 3000
-CMD ["bun", "server.js"]
+# Runtime
+FROM gcr.io/distroless/cc-debian13
+COPY --from=backend-builder /app/target/release/statsoverlay /
+COPY --from=frontend-builder /app/frontend/dist /dist
+COPY static /static
+CMD ["/statsoverlay"]

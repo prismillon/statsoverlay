@@ -1,16 +1,13 @@
-"use client";
-
-import Image from "next/image";
 import "./App.css";
-import { Suspense, useEffect, useState } from "react";
-import { Data, getData } from "./data";
+import { useEffect, useState } from "react";
+import { PlayerData, getData } from "./data";
 
 interface UserDataDisplayProps {
   name: string;
 }
 
 const UserDataDisplay: React.FC<UserDataDisplayProps> = ({ name }) => {
-  const [data, setData] = useState<Data | null>(null);
+  const [data, setData] = useState<PlayerData | null>(null);
 
   useEffect(() => {
     if (!name) return;
@@ -30,9 +27,9 @@ const UserDataDisplay: React.FC<UserDataDisplayProps> = ({ name }) => {
     return () => clearInterval(interval);
   }, [name]);
 
-  if (!data) return <Suspense></Suspense>;
+  if (!data) return null;
 
-  if (data.rank === "") {
+  if (!data.rankIconUrl) {
     return (
       <div className="flex items-center justify-center p-4">
         <p>
@@ -43,12 +40,12 @@ const UserDataDisplay: React.FC<UserDataDisplayProps> = ({ name }) => {
     );
   }
 
-  console.log("debug: ", data);
-
   return (
     <div className="stats">
       <p className="mk8dx_wrapper">
-        {!!data.rank && <Image src={data.rank} className="mk8dx_logo" alt="" />}
+        {data.rankIconUrl && (
+          <img src={data.rankIconUrl} className="mk8dx_logo" alt="" />
+        )}
         <a>{data.mmr}</a>
         <Diff modClass={data.mod} modifier={data.diff} />
       </p>

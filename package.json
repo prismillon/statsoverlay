@@ -3,22 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "dependencies": {
-    "next": "16.1.6",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
-  },
-  "devDependencies": {
-    "@types/node": "^25.2.1",
-    "@types/react": "^19.2.13",
-    "@types/react-dom": "^19.2.3",
-    "eslint": "^10.0.0",
-    "eslint-config-next": "16.1.6",
-    "typescript": "^5.9.3"
+    "start": "cargo run",
+    "build": "cd frontend && bun run build && cd .. && cargo build --release",
+    "dev": "cd frontend && bun run dev",
+    "dev:backend": "cargo run",
+    "frontend:install": "cd frontend && bun install"
   }
 }

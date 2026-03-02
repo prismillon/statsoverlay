@@ -1,9 +1,13 @@
 Dockerfile
 .dockerignore
+target
 node_modules
-npm-debug.log
-README.md
-.next
-media
+frontend/node_modules
+dist
+frontend/dist
 .git
 .github
+.next
+.DS_Store
+README.md
+media
